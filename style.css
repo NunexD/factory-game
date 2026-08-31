@@ -77,3 +77,8 @@ body.dark-mode .modal-content {
     font-weight: bold;
 }
 #close-modal:hover { color: #ff4d4d; }
+
+/* --- NEW: VISIBILITY TOGGLE --- */
+.hidden {
+    display: none !important;
+}

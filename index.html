@@ -14,16 +14,30 @@
 
 <h1>Factory Dashboard</h1>
 
+<!-- NEW: RESEARCH SECTION -->
+<div id="research-section">
+    <h2>Research & Development</h2>
+    <button id="unlock-smelting-btn">🔬 Unlock Smelting (Cost: 50 Iron Ore)</button>
+    <button id="unlock-electronics-btn" class="hidden">🔬 Unlock Electronics (Cost: 50 Iron Plates)</button>
+    <hr>
+</div>
+
 <div id="inventory">
     <h2>Raw Resources (Max: <span id="storage-cap-1">100</span>)</h2>
     <p>Iron Ore: <strong id="iron-count">0</strong> | Auto-Miners: <span id="miner-count">0</span></p>
-    <p>Copper Ore: <strong id="copper-count">0</strong> | Auto-Miners: <span id="copper-miner-count">0</span></p>
-    <p>Coal: <strong id="coal-count">0</strong> | Auto-Miners: <span id="coal-miner-count">0</span></p>
 
-    <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
-    <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
-    <p>Copper Wire: <strong id="copper-wire-count">0</strong> | Extruders: <span id="extruder-count">0</span></p>
-    <p>Circuit Boards: <strong id="circuit-board-count">0</strong> | Assemblers: <span id="assembler-count">0</span></p>
+    <p id="copper-inv" class="hidden">Copper Ore: <strong id="copper-count">0</strong> | Auto-Miners: <span id="copper-miner-count">0</span></p>
+    <p id="coal-inv" class="hidden">Coal: <strong id="coal-count">0</strong> | Auto-Miners: <span id="coal-miner-count">0</span></p>
+
+    <div id="plate-inv" class="hidden">
+        <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
+        <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
+    </div>
+
+    <div id="advanced-inv" class="hidden">
+        <p>Copper Wire: <strong id="copper-wire-count">0</strong> | Extruders: <span id="extruder-count">0</span></p>
+        <p>Circuit Boards: <strong id="circuit-board-count">0</strong> | Assemblers: <span id="assembler-count">0</span></p>
+    </div>
 </div>
 
 <hr>
@@ -34,28 +48,34 @@
     <button id="buy-miner-btn">⚙️ Build Iron Miner (Cost: <span id="miner-cost">10</span> Iron)</button>
     <br><br>
 
-    <button id="mine-copper-btn">⛏️ Mine Copper</button>
-    <button id="buy-copper-miner-btn">⚙️ Build Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
-    <br><br>
+    <div id="copper-action" class="hidden">
+        <button id="mine-copper-btn">⛏️ Mine Copper</button>
+        <button id="buy-copper-miner-btn">⚙️ Build Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
+        <br><br>
+    </div>
 
-    <button id="mine-coal-btn">⛏️ Mine Coal</button>
-    <button id="buy-coal-miner-btn">⚙️ Build Coal Miner (Cost: <span id="coal-miner-cost">10</span> Coal)</button>
+    <div id="coal-action" class="hidden">
+        <button id="mine-coal-btn">⛏️ Mine Coal</button>
+        <button id="buy-coal-miner-btn">⚙️ Build Coal Miner (Cost: <span id="coal-miner-cost">10</span> Coal)</button>
+    </div>
 
-    <h2>Processing & Logistics</h2>
-    <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
-    <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate every second)</em></small></p>
-    <br>
-    <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
+    <div id="smelting-action" class="hidden">
+        <h2>Processing & Logistics</h2>
+        <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
+        <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate every second)</em></small></p>
+        <br>
+        <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
+    </div>
 
-    <hr>
-
-    <h2>Advanced Manufacturing</h2>
-    <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
-    <p><small><em>(Extruders consume 1 Copper Ore to produce 2 Copper Wire every second)</em></small></p>
-    <br>
-    <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
-    <p><small><em>(Assemblers consume 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board every second)</em></small></p>
-
+    <div id="advanced-action" class="hidden">
+        <hr>
+        <h2>Advanced Manufacturing</h2>
+        <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
+        <p><small><em>(Extruders consume 1 Copper Ore to produce 2 Copper Wire every second)</em></small></p>
+        <br>
+        <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
+        <p><small><em>(Assemblers consume 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board every second)</em></small></p>
+    </div>
 </div>
 
 <!-- SETTINGS MODAL -->
