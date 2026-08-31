@@ -22,6 +22,8 @@
 
     <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
     <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
+    <p>Copper Wire: <strong id="copper-wire-count">0</strong> | Extruders: <span id="extruder-count">0</span></p>
+    <p>Circuit Boards: <strong id="circuit-board-count">0</strong> | Assemblers: <span id="assembler-count">0</span></p>
 </div>
 
 <hr>
@@ -43,8 +45,17 @@
     <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
     <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate every second)</em></small></p>
     <br>
-    <!-- The new Storage Upgrade Button -->
     <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
+
+    <hr>
+
+    <h2>Advanced Manufacturing</h2>
+    <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
+    <p><small><em>(Extruders consume 1 Copper Ore to produce 2 Copper Wire every second)</em></small></p>
+    <br>
+    <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
+    <p><small><em>(Assemblers consume 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board every second)</em></small></p>
+
 </div>
 
 <!-- SETTINGS MODAL -->

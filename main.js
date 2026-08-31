@@ -8,6 +8,10 @@ let coal = 0; let coalMiners = 0; let coalMinerCost = 10;
 
 let ironPlates = 0; let ironSmelters = 0; let smelterCost = 20;
 
+// New Advanced Variables
+let copperWire = 0; let wireExtruders = 0; let extruderCost = 25;
+let circuitBoards = 0; let assemblers = 0; let assemblerCost = 30;
+
 let lastSaveTime = Date.now();
 
 // --- GRAB HTML ELEMENTS ---
@@ -38,6 +42,17 @@ const ironPlateCountDisplay = document.getElementById("iron-plate-count");
 const smelterCountDisplay = document.getElementById("smelter-count");
 const smelterCostDisplay = document.getElementById("smelter-cost");
 const buySmelterBtn = document.getElementById("buy-smelter-btn");
+
+// New Advanced Elements
+const copperWireCountDisplay = document.getElementById("copper-wire-count");
+const extruderCountDisplay = document.getElementById("extruder-count");
+const extruderCostDisplay = document.getElementById("extruder-cost");
+const buyExtruderBtn = document.getElementById("buy-extruder-btn");
+
+const circuitBoardCountDisplay = document.getElementById("circuit-board-count");
+const assemblerCountDisplay = document.getElementById("assembler-count");
+const assemblerCostDisplay = document.getElementById("assembler-cost");
+const buyAssemblerBtn = document.getElementById("buy-assembler-btn");
 
 const saveBtn = document.getElementById("save-btn");
 const resetBtn = document.getElementById("reset-btn");
@@ -90,34 +105,70 @@ buySmelterBtn.addEventListener("click", () => {
     }
 });
 
-// Upgrade Storage using Iron Plates
+buyExtruderBtn.addEventListener("click", () => {
+    if (copperOre >= extruderCost) {
+        copperOre -= extruderCost;
+        wireExtruders++;
+        extruderCost = Math.floor(extruderCost * 1.5);
+        updateUI();
+    }
+});
+
+buyAssemblerBtn.addEventListener("click", () => {
+    if (ironPlates >= assemblerCost) {
+        ironPlates -= assemblerCost;
+        assemblers++;
+        assemblerCost = Math.floor(assemblerCost * 1.5);
+        updateUI();
+    }
+});
+
 upgradeStorageBtn.addEventListener("click", () => {
     if (ironPlates >= storageUpgradeCost) {
         ironPlates -= storageUpgradeCost;
-        storageCap = Math.floor(storageCap * 2); // Doubles storage!
-        storageUpgradeCost = Math.floor(storageUpgradeCost * 2.5); // Gets much more expensive
+        storageCap = Math.floor(storageCap * 2);
+        storageUpgradeCost = Math.floor(storageUpgradeCost * 2.5);
         updateUI();
     }
 });
 
 // --- 2. THE AUTOMATION LOOP ---
 setInterval(() => {
-    // Miners add resources, but cannot exceed storage cap
+    // 1. Miners
     if (ironMiners > 0) ironOre = Math.min(ironOre + ironMiners, storageCap);
     if (copperMiners > 0) copperOre = Math.min(copperOre + copperMiners, storageCap);
     if (coalMiners > 0) coal = Math.min(coal + coalMiners, storageCap);
 
-    // Smelters require Iron AND Coal, and cannot exceed Plate storage cap
+    // 2. Smelters (Iron + Coal -> Plates)
     if (ironSmelters > 0) {
         let spaceLeftForPlates = storageCap - ironPlates;
-
-        // Find the limiting factor: Smelters, Iron, Coal, or Space
         let amountToSmelt = Math.min(ironOre, coal, ironSmelters, spaceLeftForPlates);
-
         ironOre -= amountToSmelt;
         coal -= amountToSmelt;
         ironPlates += amountToSmelt;
     }
+
+    // 3. Extruders (Copper -> 2x Wire)
+    if (wireExtruders > 0) {
+        let spaceLeftForWire = storageCap - copperWire;
+        // Divide space by 2 because each operation makes 2 wires
+        let amountToExtrude = Math.min(copperOre, wireExtruders, Math.floor(spaceLeftForWire / 2));
+        copperOre -= amountToExtrude;
+        copperWire += (amountToExtrude * 2);
+    }
+
+    // 4. Assemblers (Plate + 2x Wire -> Circuit Board)
+    if (assemblers > 0) {
+        let spaceLeftForBoards = storageCap - circuitBoards;
+        // Find how many operations we can do based on having enough wire (needs 2 per operation)
+        let maxFromWire = Math.floor(copperWire / 2);
+        let amountToAssemble = Math.min(ironPlates, maxFromWire, assemblers, spaceLeftForBoards);
+
+        ironPlates -= amountToAssemble;
+        copperWire -= (amountToAssemble * 2);
+        circuitBoards += amountToAssemble;
+    }
+
     updateUI();
 }, 1000);
 
@@ -147,6 +198,15 @@ function updateUI() {
     ironPlateCountDisplay.innerText = ironPlates;
     smelterCountDisplay.innerText = ironSmelters;
     smelterCostDisplay.innerText = smelterCost;
+
+    // Advanced UI Updates
+    copperWireCountDisplay.innerText = copperWire;
+    extruderCountDisplay.innerText = wireExtruders;
+    extruderCostDisplay.innerText = extruderCost;
+
+    circuitBoardCountDisplay.innerText = circuitBoards;
+    assemblerCountDisplay.innerText = assemblers;
+    assemblerCostDisplay.innerText = assemblerCost;
 }
 
 // --- 4. SAVE & LOAD SYSTEM ---
@@ -156,7 +216,10 @@ function saveGame() {
         ironOre, ironMiners, ironMinerCost,
         copperOre, copperMiners, copperMinerCost,
         coal, coalMiners, coalMinerCost,
-        ironPlates, ironSmelters, smelterCost
+        ironPlates, ironSmelters, smelterCost,
+        // Added advanced goods to save
+        copperWire, wireExtruders, extruderCost,
+        circuitBoards, assemblers, assemblerCost
     };
     localStorage.setItem("factorySave", JSON.stringify(gameData));
     lastSaveTime = Date.now();
@@ -181,6 +244,14 @@ function loadGame() {
         if (data.ironPlates !== undefined) ironPlates = data.ironPlates;
         if (data.ironSmelters !== undefined) ironSmelters = data.ironSmelters;
         if (data.smelterCost !== undefined) smelterCost = data.smelterCost;
+
+        // Load advanced goods
+        if (data.copperWire !== undefined) copperWire = data.copperWire;
+        if (data.wireExtruders !== undefined) wireExtruders = data.wireExtruders;
+        if (data.extruderCost !== undefined) extruderCost = data.extruderCost;
+        if (data.circuitBoards !== undefined) circuitBoards = data.circuitBoards;
+        if (data.assemblers !== undefined) assemblers = data.assemblers;
+        if (data.assemblerCost !== undefined) assemblerCost = data.assemblerCost;
 
         lastSaveTime = Date.now();
         updateUI();
