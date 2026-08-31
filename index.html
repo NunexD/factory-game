@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Factory Game - V2.0</title>
+    <title>My Factory Game - V3.1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,19 +14,20 @@
 
 <h1>Factory Dashboard</h1>
 
-<!-- VERSION 2.0 FACTORY FLOOR -->
 <div id="visual-factory-section">
     <h2>Factory Floor</h2>
     <canvas id="factory-floor" width="480" height="480"></canvas>
 
     <div id="build-mode-controls">
         <h3>🏗️ Active Tool: <span id="current-mode-display">🖐️ Pick Up Tool</span></h3>
-        <p><small><em>Select a machine below, then click on the grid to place it.</em></small></p>
+        <p><small><em>Route items to the <strong>STORAGE CORE</strong> with belts, OR place machines directly next to each other to pass items automatically! <strong style="color: #e53935;">Press 'R' to rotate belts.</strong></em></small></p>
 
         <button id="mode-pickup" class="mode-btn active">🖐️ Pick Up Tool</button>
         <br><br>
 
-        <!-- Placement Selection Buttons -->
+        <button id="place-belt" class="mode-btn">🛤️ Conveyor Belt (Cost: 1 Plate)</button>
+        <br><br>
+
         <button id="place-iron-miner" class="mode-btn">Iron Miner [1x1] (<span id="unplaced-iron-miners">0</span>)</button>
         <button id="place-copper-miner" class="mode-btn hidden">Copper Miner [1x1] (<span id="unplaced-copper-miners">0</span>)</button>
         <button id="place-coal-miner" class="mode-btn hidden">Coal Miner [1x1] (<span id="unplaced-coal-miners">0</span>)</button>
@@ -51,22 +52,18 @@
         <hr>
     </div>
 
-    <h2>Raw Resources (Max: <span id="storage-cap-1">100</span>)</h2>
+    <h2>Core Storage Bank (Max: <span id="storage-cap-1">100</span>)</h2>
     <p>Iron Ore: <strong id="iron-count">0</strong></p>
     <p id="copper-inv" class="hidden">Copper Ore: <strong id="copper-count">0</strong></p>
     <p id="coal-inv" class="hidden">Coal: <strong id="coal-count">0</strong></p>
 
     <div id="plate-inv" class="hidden">
-        <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
         <p>Iron Plates: <strong id="iron-plate-count">0</strong></p>
-        <div class="machine-progress"><div id="smelter-progress" class="machine-fill"></div></div>
     </div>
 
     <div id="advanced-inv" class="hidden">
         <p>Copper Wire: <strong id="copper-wire-count">0</strong></p>
-        <div class="machine-progress"><div id="extruder-progress" class="machine-fill"></div></div>
         <p>Circuit Boards: <strong id="circuit-board-count">0</strong></p>
-        <div class="machine-progress"><div id="assembler-progress" class="machine-fill"></div></div>
     </div>
 </div>
 
@@ -93,7 +90,6 @@
     <div id="smelting-action" class="hidden">
         <hr>
         <button id="buy-smelter-btn">🔥 Buy Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
-        <p><small><em>(Size: 2x3 blocks. Consumes 1 Iron Ore + 1 Coal)</em></small></p>
         <br>
         <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
     </div>
@@ -101,20 +97,16 @@
     <div id="advanced-action" class="hidden">
         <hr>
         <button id="buy-engine-btn">🚂 Buy Steam Engine (Cost: <span id="engine-cost">20</span> Plates)</button>
-        <p><small><em>(Size: 2x2 blocks. Consumes 1 Coal to generate 10 kW)</em></small></p>
         <br>
         <button id="buy-extruder-btn">🏭 Buy Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
-        <p><small><em>(Size: 2x2 blocks. Uses 2 kW. Consumes 1 Copper)</em></small></p>
         <br>
         <button id="buy-assembler-btn">🤖 Buy Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
-        <p><small><em>(Size: 3x3 blocks. Uses 5 kW. Consumes 1 Plate + 2 Wire)</em></small></p>
     </div>
 
     <div id="upgrades-action" class="hidden">
         <hr>
         <h2>Efficiency & Expansion 📈</h2>
         <button id="buy-land-btn">🗺️ Expand Factory Floor (Cost: <span id="land-cost">50</span> Plates)</button>
-        <p><small><em>(Adds more space to the physical building grid)</em></small></p>
         <br>
         <button id="upg-pickaxe-btn">🛠️ Steel Pickaxe (Cost: 10 Circuit Boards)</button>
         <br>
@@ -124,20 +116,11 @@
     </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div id="settings-modal" class="modal-overlay">
     <div class="modal-content">
         <span id="close-modal">&times;</span>
         <h2>System & Data</h2>
-        <p><small>Game auto-saves every 10 seconds.</small></p>
-        <p id="time-since-save">Last saved: Just now</p>
         <button id="save-btn">💾 Manual Save</button>
-        <button id="export-btn">⬇️ Export Save</button>
-        <br><br>
-        <label for="import-file"><strong>Import Save:</strong> </label>
-        <input type="file" id="import-file" accept=".json">
-        <br><br>
-        <hr>
         <button id="reset-btn" class="danger-btn">⚠️ Hard Reset</button>
     </div>
 </div>
