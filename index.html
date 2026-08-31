@@ -7,17 +7,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- The New Theme Button -->
 <button id="theme-toggle">🌙 Dark Mode</button>
 
 <h1>Factory Dashboard</h1>
 
 <div id="inventory">
-    <h2>Iron Ore: <span id="iron-count">0</span></h2>
+    <h2>Raw Resources</h2>
+    <p>Iron Ore: <strong id="iron-count">0</strong> | Auto-Miners: <span id="miner-count">0</span></p>
+    <p>Copper Ore: <strong id="copper-count">0</strong> | Auto-Miners: <span id="copper-miner-count">0</span></p>
+
+    <h2>Manufactured Goods</h2>
+    <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
 </div>
 
+<hr>
+
 <div id="actions">
-    <button id="mine-iron-btn">Mine Iron</button>
+    <h2>Mining & Automation</h2>
+    <!-- Iron Controls -->
+    <button id="mine-iron-btn">⛏️ Mine Iron Manually</button>
+    <button id="buy-miner-btn">⚙️ Build Iron Miner (Cost: <span id="miner-cost">10</span> Iron)</button>
+    <br><br>
+
+    <!-- Copper Controls -->
+    <button id="mine-copper-btn">⛏️ Mine Copper Manually</button>
+    <button id="buy-copper-miner-btn">⚙️ Build Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
+
+    <h2>Processing</h2>
+    <!-- Smelter Controls -->
+    <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
+    <p><small><em>(Smelters automatically consume 1 Iron Ore to produce 1 Iron Plate every second)</em></small></p>
 </div>
 
 <script src="main.js"></script>

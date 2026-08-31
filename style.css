@@ -4,14 +4,30 @@ body {
     color: #333333;
     font-family: Arial, sans-serif;
     padding: 20px;
-    /* This makes the color change fade smoothly instead of flashing instantly */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Dark Mode (When this class is added to the body, these colors take over) */
+/* Dark Mode */
 body.dark-mode {
-    background-color: #121212; /* A really dark grey/black */
-    color: #e0e0e0; /* A soft white/light grey */
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Structural Spacing */
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+hr {
+    border: 1px solid currentColor;
+    opacity: 0.2;
+    margin: 30px 0;
+}
+
+button {
+    padding: 8px 12px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 /* The Theme Button */
@@ -19,15 +35,13 @@ body.dark-mode {
     position: absolute;
     top: 20px;
     right: 20px;
-    padding: 8px 12px;
-    cursor: pointer;
     font-weight: bold;
-    border: 2px solid currentColor; /* Uses whatever the text color currently is */
+    border: 2px solid currentColor;
     background: transparent;
     color: inherit;
     border-radius: 5px;
 }
 
 #theme-toggle:hover {
-    opacity: 0.7; /* Makes it react a little when you hover over it */
+    opacity: 0.7;
 }
