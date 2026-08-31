@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- Top Right Controls -->
 <div id="top-controls">
     <button id="theme-toggle">🌙 Dark Mode</button>
     <button id="settings-btn">⚙️ System</button>
@@ -16,11 +15,12 @@
 <h1>Factory Dashboard</h1>
 
 <div id="inventory">
-    <h2>Raw Resources</h2>
+    <h2>Raw Resources (Max: <span id="storage-cap-1">100</span>)</h2>
     <p>Iron Ore: <strong id="iron-count">0</strong> | Auto-Miners: <span id="miner-count">0</span></p>
     <p>Copper Ore: <strong id="copper-count">0</strong> | Auto-Miners: <span id="copper-miner-count">0</span></p>
+    <p>Coal: <strong id="coal-count">0</strong> | Auto-Miners: <span id="coal-miner-count">0</span></p>
 
-    <h2>Manufactured Goods</h2>
+    <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
     <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
 </div>
 
@@ -28,19 +28,26 @@
 
 <div id="actions">
     <h2>Mining & Automation</h2>
-    <button id="mine-iron-btn">⛏️ Mine Iron Manually</button>
+    <button id="mine-iron-btn">⛏️ Mine Iron</button>
     <button id="buy-miner-btn">⚙️ Build Iron Miner (Cost: <span id="miner-cost">10</span> Iron)</button>
     <br><br>
 
-    <button id="mine-copper-btn">⛏️ Mine Copper Manually</button>
+    <button id="mine-copper-btn">⛏️ Mine Copper</button>
     <button id="buy-copper-miner-btn">⚙️ Build Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
+    <br><br>
 
-    <h2>Processing</h2>
+    <button id="mine-coal-btn">⛏️ Mine Coal</button>
+    <button id="buy-coal-miner-btn">⚙️ Build Coal Miner (Cost: <span id="coal-miner-cost">10</span> Coal)</button>
+
+    <h2>Processing & Logistics</h2>
     <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
-    <p><small><em>(Smelters automatically consume 1 Iron Ore to produce 1 Iron Plate every second)</em></small></p>
+    <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate every second)</em></small></p>
+    <br>
+    <!-- The new Storage Upgrade Button -->
+    <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
 </div>
 
-<!-- NEW: HIDDEN SETTINGS MODAL -->
+<!-- SETTINGS MODAL -->
 <div id="settings-modal" class="modal-overlay">
     <div class="modal-content">
         <span id="close-modal">&times;</span>
