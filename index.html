@@ -14,7 +14,6 @@
 
 <h1>Factory Dashboard</h1>
 
-<!-- NEW: RESEARCH SECTION -->
 <div id="research-section">
     <h2>Research & Development</h2>
     <button id="unlock-smelting-btn">🔬 Unlock Smelting (Cost: 50 Iron Ore)</button>
@@ -23,6 +22,12 @@
 </div>
 
 <div id="inventory">
+    <div id="power-grid" class="hidden">
+        <h2>⚡ Power Grid: <span id="power-status">0 kW / 0 kW</span></h2>
+        <p>Steam Engines: <strong id="engine-count">0</strong></p>
+        <hr>
+    </div>
+
     <h2>Raw Resources (Max: <span id="storage-cap-1">100</span>)</h2>
     <p>Iron Ore: <strong id="iron-count">0</strong> | Auto-Miners: <span id="miner-count">0</span></p>
 
@@ -69,12 +74,15 @@
 
     <div id="advanced-action" class="hidden">
         <hr>
-        <h2>Advanced Manufacturing</h2>
+        <h2>Advanced Manufacturing ⚡</h2>
+        <button id="buy-engine-btn">🚂 Build Steam Engine (Cost: <span id="engine-cost">20</span> Plates)</button>
+        <p><small><em>(Consumes 1 Coal to generate 10 kW of Power every second)</em></small></p>
+        <br>
         <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
-        <p><small><em>(Extruders consume 1 Copper Ore to produce 2 Copper Wire every second)</em></small></p>
+        <p><small><em>(Uses 2 kW. Consumes 1 Copper Ore to produce 2 Copper Wire)</em></small></p>
         <br>
         <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
-        <p><small><em>(Assemblers consume 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board every second)</em></small></p>
+        <p><small><em>(Uses 5 kW. Consumes 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board)</em></small></p>
     </div>
 </div>
 

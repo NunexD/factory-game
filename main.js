@@ -1,20 +1,17 @@
 // --- GAME STATE VARIABLES ---
-let storageCap = 100;
-let storageUpgradeCost = 25;
-
+let storageCap = 100; let storageUpgradeCost = 25;
 let ironOre = 0; let ironMiners = 0; let ironMinerCost = 10;
 let copperOre = 0; let copperMiners = 0; let copperMinerCost = 10;
 let coal = 0; let coalMiners = 0; let coalMinerCost = 10;
-
 let ironPlates = 0; let ironSmelters = 0; let smelterCost = 20;
-
 let copperWire = 0; let wireExtruders = 0; let extruderCost = 25;
 let circuitBoards = 0; let assemblers = 0; let assemblerCost = 30;
 
-// New Tech Tree Variables
-let unlockedSmelting = false;
-let unlockedElectronics = false;
+// Power Variables
+let steamEngines = 0; let steamEngineCost = 20;
+let powerSupply = 0; let powerDemand = 0;
 
+let unlockedSmelting = false; let unlockedElectronics = false;
 let lastSaveTime = Date.now();
 
 // --- GRAB HTML ELEMENTS ---
@@ -56,7 +53,12 @@ const assemblerCountDisplay = document.getElementById("assembler-count");
 const assemblerCostDisplay = document.getElementById("assembler-cost");
 const buyAssemblerBtn = document.getElementById("buy-assembler-btn");
 
-// Research Elements
+// Power Elements
+const powerStatusDisplay = document.getElementById("power-status");
+const engineCountDisplay = document.getElementById("engine-count");
+const engineCostDisplay = document.getElementById("engine-cost");
+const buyEngineBtn = document.getElementById("buy-engine-btn");
+
 const unlockSmeltingBtn = document.getElementById("unlock-smelting-btn");
 const unlockElectronicsBtn = document.getElementById("unlock-electronics-btn");
 
@@ -75,89 +77,64 @@ mineIronBtn.addEventListener("click", () => { if (ironOre < storageCap) ironOre+
 mineCopperBtn.addEventListener("click", () => { if (copperOre < storageCap) copperOre++; updateUI(); });
 mineCoalBtn.addEventListener("click", () => { if (coal < storageCap) coal++; updateUI(); });
 
-buyIronMinerBtn.addEventListener("click", () => {
-    if (ironOre >= ironMinerCost) {
-        ironOre -= ironMinerCost; ironMiners++; ironMinerCost = Math.floor(ironMinerCost * 1.5); updateUI();
-    }
-});
+buyIronMinerBtn.addEventListener("click", () => { if (ironOre >= ironMinerCost) { ironOre -= ironMinerCost; ironMiners++; ironMinerCost = Math.floor(ironMinerCost * 1.5); updateUI(); } });
+buyCopperMinerBtn.addEventListener("click", () => { if (copperOre >= copperMinerCost) { copperOre -= copperMinerCost; copperMiners++; copperMinerCost = Math.floor(copperMinerCost * 1.5); updateUI(); } });
+buyCoalMinerBtn.addEventListener("click", () => { if (coal >= coalMinerCost) { coal -= coalMinerCost; coalMiners++; coalMinerCost = Math.floor(coalMinerCost * 1.5); updateUI(); } });
+buySmelterBtn.addEventListener("click", () => { if (ironOre >= smelterCost) { ironOre -= smelterCost; ironSmelters++; smelterCost = Math.floor(smelterCost * 1.5); updateUI(); } });
+buyExtruderBtn.addEventListener("click", () => { if (copperOre >= extruderCost) { copperOre -= extruderCost; wireExtruders++; extruderCost = Math.floor(extruderCost * 1.5); updateUI(); } });
+buyAssemblerBtn.addEventListener("click", () => { if (ironPlates >= assemblerCost) { ironPlates -= assemblerCost; assemblers++; assemblerCost = Math.floor(assemblerCost * 1.5); updateUI(); } });
 
-buyCopperMinerBtn.addEventListener("click", () => {
-    if (copperOre >= copperMinerCost) {
-        copperOre -= copperMinerCost; copperMiners++; copperMinerCost = Math.floor(copperMinerCost * 1.5); updateUI();
-    }
-});
-
-buyCoalMinerBtn.addEventListener("click", () => {
-    if (coal >= coalMinerCost) {
-        coal -= coalMinerCost; coalMiners++; coalMinerCost = Math.floor(coalMinerCost * 1.5); updateUI();
-    }
-});
-
-buySmelterBtn.addEventListener("click", () => {
-    if (ironOre >= smelterCost) {
-        ironOre -= smelterCost; ironSmelters++; smelterCost = Math.floor(smelterCost * 1.5); updateUI();
-    }
-});
-
-buyExtruderBtn.addEventListener("click", () => {
-    if (copperOre >= extruderCost) {
-        copperOre -= extruderCost; wireExtruders++; extruderCost = Math.floor(extruderCost * 1.5); updateUI();
-    }
-});
-
-buyAssemblerBtn.addEventListener("click", () => {
-    if (ironPlates >= assemblerCost) {
-        ironPlates -= assemblerCost; assemblers++; assemblerCost = Math.floor(assemblerCost * 1.5); updateUI();
-    }
-});
-
-upgradeStorageBtn.addEventListener("click", () => {
-    if (ironPlates >= storageUpgradeCost) {
-        ironPlates -= storageUpgradeCost; storageCap = Math.floor(storageCap * 2); storageUpgradeCost = Math.floor(storageUpgradeCost * 2.5); updateUI();
-    }
-});
-
-// --- RESEARCH BUTTONS ---
-unlockSmeltingBtn.addEventListener("click", () => {
-    if (ironOre >= 50) {
-        ironOre -= 50;
-        unlockedSmelting = true;
+buyEngineBtn.addEventListener("click", () => {
+    if (ironPlates >= steamEngineCost) {
+        ironPlates -= steamEngineCost;
+        steamEngines++;
+        steamEngineCost = Math.floor(steamEngineCost * 1.5);
         updateUI();
     }
 });
 
-unlockElectronicsBtn.addEventListener("click", () => {
-    if (ironPlates >= 50) {
-        ironPlates -= 50;
-        unlockedElectronics = true;
-        updateUI();
-    }
-});
+upgradeStorageBtn.addEventListener("click", () => { if (ironPlates >= storageUpgradeCost) { ironPlates -= storageUpgradeCost; storageCap = Math.floor(storageCap * 2); storageUpgradeCost = Math.floor(storageUpgradeCost * 2.5); updateUI(); } });
 
+unlockSmeltingBtn.addEventListener("click", () => { if (ironOre >= 50) { ironOre -= 50; unlockedSmelting = true; updateUI(); } });
+unlockElectronicsBtn.addEventListener("click", () => { if (ironPlates >= 50) { ironPlates -= 50; unlockedElectronics = true; updateUI(); } });
 
 // --- 2. THE AUTOMATION LOOP ---
 setInterval(() => {
+    // 1. Miners
     if (ironMiners > 0) ironOre = Math.min(ironOre + ironMiners, storageCap);
     if (copperMiners > 0) copperOre = Math.min(copperOre + copperMiners, storageCap);
     if (coalMiners > 0) coal = Math.min(coal + coalMiners, storageCap);
 
+    // 2. Power Generation (Steam Engines get first priority on Coal)
+    // You only generate power for the engines that actually have coal to burn!
+    let activeEngines = Math.min(steamEngines, coal);
+    coal -= activeEngines;
+    powerSupply = activeEngines * 10;
+
+    // 3. Power Demand
+    powerDemand = (wireExtruders * 2) + (assemblers * 5);
+
+    // 4. Smelters (They run on direct coal, not electricity)
     if (ironSmelters > 0) {
         let spaceLeftForPlates = storageCap - ironPlates;
         let amountToSmelt = Math.min(ironOre, coal, ironSmelters, spaceLeftForPlates);
         ironOre -= amountToSmelt; coal -= amountToSmelt; ironPlates += amountToSmelt;
     }
 
-    if (wireExtruders > 0) {
-        let spaceLeftForWire = storageCap - copperWire;
-        let amountToExtrude = Math.min(copperOre, wireExtruders, Math.floor(spaceLeftForWire / 2));
-        copperOre -= amountToExtrude; copperWire += (amountToExtrude * 2);
-    }
+    // 5. Advanced Manufacturing (ONLY RUNS IF POWER SUPPLY >= DEMAND)
+    if (powerSupply >= powerDemand && powerDemand > 0) {
+        if (wireExtruders > 0) {
+            let spaceLeftForWire = storageCap - copperWire;
+            let amountToExtrude = Math.min(copperOre, wireExtruders, Math.floor(spaceLeftForWire / 2));
+            copperOre -= amountToExtrude; copperWire += (amountToExtrude * 2);
+        }
 
-    if (assemblers > 0) {
-        let spaceLeftForBoards = storageCap - circuitBoards;
-        let maxFromWire = Math.floor(copperWire / 2);
-        let amountToAssemble = Math.min(ironPlates, maxFromWire, assemblers, spaceLeftForBoards);
-        ironPlates -= amountToAssemble; copperWire -= (amountToAssemble * 2); circuitBoards += amountToAssemble;
+        if (assemblers > 0) {
+            let spaceLeftForBoards = storageCap - circuitBoards;
+            let maxFromWire = Math.floor(copperWire / 2);
+            let amountToAssemble = Math.min(ironPlates, maxFromWire, assemblers, spaceLeftForBoards);
+            ironPlates -= amountToAssemble; copperWire -= (amountToAssemble * 2); circuitBoards += amountToAssemble;
+        }
     }
 
     updateUI();
@@ -170,46 +147,34 @@ setInterval(() => {
 
 // --- 3. UPDATE THE SCREEN ---
 function updateUI() {
-    storageCapDisplay1.innerText = storageCap;
-    storageCapDisplay2.innerText = storageCap;
+    storageCapDisplay1.innerText = storageCap; storageCapDisplay2.innerText = storageCap;
     storageUpgradeCostDisplay.innerText = storageUpgradeCost;
 
-    ironCountDisplay.innerText = ironOre;
-    ironMinerCountDisplay.innerText = ironMiners;
-    ironMinerCostDisplay.innerText = ironMinerCost;
+    ironCountDisplay.innerText = ironOre; ironMinerCountDisplay.innerText = ironMiners; ironMinerCostDisplay.innerText = ironMinerCost;
+    copperCountDisplay.innerText = copperOre; copperMinerCountDisplay.innerText = copperMiners; copperMinerCostDisplay.innerText = copperMinerCost;
+    coalCountDisplay.innerText = coal; coalMinerCountDisplay.innerText = coalMiners; coalMinerCostDisplay.innerText = coalMinerCost;
+    ironPlateCountDisplay.innerText = ironPlates; smelterCountDisplay.innerText = ironSmelters; smelterCostDisplay.innerText = smelterCost;
+    copperWireCountDisplay.innerText = copperWire; extruderCountDisplay.innerText = wireExtruders; extruderCostDisplay.innerText = extruderCost;
+    circuitBoardCountDisplay.innerText = circuitBoards; assemblerCountDisplay.innerText = assemblers; assemblerCostDisplay.innerText = assemblerCost;
 
-    copperCountDisplay.innerText = copperOre;
-    copperMinerCountDisplay.innerText = copperMiners;
-    copperMinerCostDisplay.innerText = copperMinerCost;
+    // Power UI
+    engineCountDisplay.innerText = steamEngines;
+    engineCostDisplay.innerText = steamEngineCost;
+    powerStatusDisplay.innerText = `${powerSupply} kW / ${powerDemand} kW`;
 
-    coalCountDisplay.innerText = coal;
-    coalMinerCountDisplay.innerText = coalMiners;
-    coalMinerCostDisplay.innerText = coalMinerCost;
+    if (powerDemand > powerSupply) {
+        powerStatusDisplay.classList.add("power-shortage");
+    } else {
+        powerStatusDisplay.classList.remove("power-shortage");
+    }
 
-    ironPlateCountDisplay.innerText = ironPlates;
-    smelterCountDisplay.innerText = ironSmelters;
-    smelterCostDisplay.innerText = smelterCost;
-
-    copperWireCountDisplay.innerText = copperWire;
-    extruderCountDisplay.innerText = wireExtruders;
-    extruderCostDisplay.innerText = extruderCost;
-
-    circuitBoardCountDisplay.innerText = circuitBoards;
-    assemblerCountDisplay.innerText = assemblers;
-    assemblerCostDisplay.innerText = assemblerCost;
-
-    // --- MANAGE VISIBILITY BASED ON RESEARCH ---
     if (unlockedSmelting) {
         document.getElementById("coal-inv").classList.remove("hidden");
         document.getElementById("plate-inv").classList.remove("hidden");
         document.getElementById("coal-action").classList.remove("hidden");
         document.getElementById("smelting-action").classList.remove("hidden");
         unlockSmeltingBtn.classList.add("hidden");
-
-        // Show the next research option if it hasn't been unlocked yet
-        if (!unlockedElectronics) {
-            unlockElectronicsBtn.classList.remove("hidden");
-        }
+        if (!unlockedElectronics) unlockElectronicsBtn.classList.remove("hidden");
     }
 
     if (unlockedElectronics) {
@@ -217,10 +182,10 @@ function updateUI() {
         document.getElementById("advanced-inv").classList.remove("hidden");
         document.getElementById("copper-action").classList.remove("hidden");
         document.getElementById("advanced-action").classList.remove("hidden");
+        document.getElementById("power-grid").classList.remove("hidden"); // Reveal power grid!
         unlockElectronicsBtn.classList.add("hidden");
     }
 
-    // Hide the whole research section once everything is unlocked
     if (unlockedSmelting && unlockedElectronics) {
         document.getElementById("research-section").classList.add("hidden");
     }
@@ -230,13 +195,10 @@ function updateUI() {
 function saveGame() {
     const gameData = {
         storageCap, storageUpgradeCost,
-        ironOre, ironMiners, ironMinerCost,
-        copperOre, copperMiners, copperMinerCost,
-        coal, coalMiners, coalMinerCost,
-        ironPlates, ironSmelters, smelterCost,
-        copperWire, wireExtruders, extruderCost,
-        circuitBoards, assemblers, assemblerCost,
-        unlockedSmelting, unlockedElectronics // Saving our research progress!
+        ironOre, ironMiners, ironMinerCost, copperOre, copperMiners, copperMinerCost, coal, coalMiners, coalMinerCost,
+        ironPlates, ironSmelters, smelterCost, copperWire, wireExtruders, extruderCost, circuitBoards, assemblers, assemblerCost,
+        steamEngines, steamEngineCost,
+        unlockedSmelting, unlockedElectronics
     };
     localStorage.setItem("factorySave", JSON.stringify(gameData));
     lastSaveTime = Date.now();
@@ -247,29 +209,15 @@ function loadGame() {
     const savedData = localStorage.getItem("factorySave");
     if (savedData) {
         const data = JSON.parse(savedData);
-        if (data.storageCap !== undefined) storageCap = data.storageCap;
-        if (data.storageUpgradeCost !== undefined) storageUpgradeCost = data.storageUpgradeCost;
-        if (data.ironOre !== undefined) ironOre = data.ironOre;
-        if (data.ironMiners !== undefined) ironMiners = data.ironMiners;
-        if (data.ironMinerCost !== undefined) ironMinerCost = data.ironMinerCost;
-        if (data.copperOre !== undefined) copperOre = data.copperOre;
-        if (data.copperMiners !== undefined) copperMiners = data.copperMiners;
-        if (data.copperMinerCost !== undefined) copperMinerCost = data.copperMinerCost;
-        if (data.coal !== undefined) coal = data.coal;
-        if (data.coalMiners !== undefined) coalMiners = data.coalMiners;
-        if (data.coalMinerCost !== undefined) coalMinerCost = data.coalMinerCost;
-        if (data.ironPlates !== undefined) ironPlates = data.ironPlates;
-        if (data.ironSmelters !== undefined) ironSmelters = data.ironSmelters;
-        if (data.smelterCost !== undefined) smelterCost = data.smelterCost;
+        if (data.storageCap !== undefined) storageCap = data.storageCap; if (data.storageUpgradeCost !== undefined) storageUpgradeCost = data.storageUpgradeCost;
+        if (data.ironOre !== undefined) ironOre = data.ironOre; if (data.ironMiners !== undefined) ironMiners = data.ironMiners; if (data.ironMinerCost !== undefined) ironMinerCost = data.ironMinerCost;
+        if (data.copperOre !== undefined) copperOre = data.copperOre; if (data.copperMiners !== undefined) copperMiners = data.copperMiners; if (data.copperMinerCost !== undefined) copperMinerCost = data.copperMinerCost;
+        if (data.coal !== undefined) coal = data.coal; if (data.coalMiners !== undefined) coalMiners = data.coalMiners; if (data.coalMinerCost !== undefined) coalMinerCost = data.coalMinerCost;
+        if (data.ironPlates !== undefined) ironPlates = data.ironPlates; if (data.ironSmelters !== undefined) ironSmelters = data.ironSmelters; if (data.smelterCost !== undefined) smelterCost = data.smelterCost;
+        if (data.copperWire !== undefined) copperWire = data.copperWire; if (data.wireExtruders !== undefined) wireExtruders = data.wireExtruders; if (data.extruderCost !== undefined) extruderCost = data.extruderCost;
+        if (data.circuitBoards !== undefined) circuitBoards = data.circuitBoards; if (data.assemblers !== undefined) assemblers = data.assemblers; if (data.assemblerCost !== undefined) assemblerCost = data.assemblerCost;
+        if (data.steamEngines !== undefined) steamEngines = data.steamEngines; if (data.steamEngineCost !== undefined) steamEngineCost = data.steamEngineCost;
 
-        if (data.copperWire !== undefined) copperWire = data.copperWire;
-        if (data.wireExtruders !== undefined) wireExtruders = data.wireExtruders;
-        if (data.extruderCost !== undefined) extruderCost = data.extruderCost;
-        if (data.circuitBoards !== undefined) circuitBoards = data.circuitBoards;
-        if (data.assemblers !== undefined) assemblers = data.assemblers;
-        if (data.assemblerCost !== undefined) assemblerCost = data.assemblerCost;
-
-        // Load research
         if (data.unlockedSmelting !== undefined) unlockedSmelting = data.unlockedSmelting;
         if (data.unlockedElectronics !== undefined) unlockedElectronics = data.unlockedElectronics;
 
@@ -278,77 +226,18 @@ function loadGame() {
     }
 }
 
-setInterval(saveGame, 10000);
-saveBtn.addEventListener("click", saveGame);
-resetBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to wipe all progress? This cannot be undone!")) {
-        localStorage.removeItem("factorySave");
-        location.reload();
-    }
-});
-
-exportBtn.addEventListener("click", () => {
-    saveGame();
-    const savedData = localStorage.getItem("factorySave");
-    const blob = new Blob([savedData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "factory-save.json";
-    a.click();
-    URL.revokeObjectURL(url);
-});
-
-importFile.addEventListener("change", (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                localStorage.setItem("factorySave", JSON.stringify(importedData));
-                alert("Save imported successfully! Reloading game...");
-                location.reload();
-            } catch (err) {
-                alert("Invalid save file!");
-            }
-        };
-        reader.readAsText(file);
-    }
-});
-
+setInterval(saveGame, 10000); saveBtn.addEventListener("click", saveGame);
+resetBtn.addEventListener("click", () => { if (confirm("Are you sure you want to wipe all progress? This cannot be undone!")) { localStorage.removeItem("factorySave"); location.reload(); } });
+exportBtn.addEventListener("click", () => { saveGame(); const b = new Blob([localStorage.getItem("factorySave")], { type: "application/json" }); const u = URL.createObjectURL(b); const a = document.createElement("a"); a.href = u; a.download = "factory-save.json"; a.click(); URL.revokeObjectURL(u); });
+importFile.addEventListener("change", (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = function(ev) { try { localStorage.setItem("factorySave", JSON.stringify(JSON.parse(ev.target.result))); alert("Save imported!"); location.reload(); } catch (err) { alert("Invalid save file!"); } }; r.readAsText(f); } });
 loadGame();
-
-window.addEventListener("beforeunload", (event) => {
-    const secondsUnsaved = Math.floor((Date.now() - lastSaveTime) / 1000);
-    if (secondsUnsaved > 2) {
-        event.preventDefault();
-        event.returnValue = "";
-    }
-});
+window.addEventListener("beforeunload", (e) => { if (Math.floor((Date.now() - lastSaveTime) / 1000) > 2) { e.preventDefault(); e.returnValue = ""; } });
 
 // --- 5. MODAL & THEME LOGIC ---
 settingsBtn.addEventListener("click", () => { settingsModal.style.display = "flex"; });
 closeModal.addEventListener("click", () => { settingsModal.style.display = "none"; });
-window.addEventListener("click", (event) => {
-    if (event.target === settingsModal) settingsModal.style.display = "none";
-});
+window.addEventListener("click", (e) => { if (e.target === settingsModal) settingsModal.style.display = "none"; });
 
-const themeToggleBtn = document.getElementById("theme-toggle");
-const body = document.body;
-
-if (localStorage.getItem("theme") === "dark") {
-    body.classList.add("dark-mode");
-    themeToggleBtn.innerText = "☀️ Light Mode";
-}
-
-themeToggleBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    if (body.classList.contains("dark-mode")) {
-        themeToggleBtn.innerText = "☀️ Light Mode";
-        localStorage.setItem("theme", "dark");
-    } else {
-        themeToggleBtn.innerText = "🌙 Dark Mode";
-        localStorage.setItem("theme", "light");
-    }
-});
+const themeToggleBtn = document.getElementById("theme-toggle"); const body = document.body;
+if (localStorage.getItem("theme") === "dark") { body.classList.add("dark-mode"); themeToggleBtn.innerText = "☀️ Light Mode"; }
+themeToggleBtn.addEventListener("click", () => { body.classList.toggle("dark-mode"); if (body.classList.contains("dark-mode")) { themeToggleBtn.innerText = "☀️ Light Mode"; localStorage.setItem("theme", "dark"); } else { themeToggleBtn.innerText = "🌙 Dark Mode"; localStorage.setItem("theme", "light"); } });
