@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Factory Game</title>
+    <title>My Factory Game - V2.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,6 +13,30 @@
 </div>
 
 <h1>Factory Dashboard</h1>
+
+<!-- VERSION 2.0 FACTORY FLOOR -->
+<div id="visual-factory-section">
+    <h2>Factory Floor</h2>
+    <canvas id="factory-floor" width="480" height="480"></canvas>
+
+    <div id="build-mode-controls">
+        <h3>🏗️ Active Tool: <span id="current-mode-display">🖐️ Pick Up Tool</span></h3>
+        <p><small><em>Select a machine below, then click on the grid to place it.</em></small></p>
+
+        <button id="mode-pickup" class="mode-btn active">🖐️ Pick Up Tool</button>
+        <br><br>
+
+        <!-- Placement Selection Buttons -->
+        <button id="place-iron-miner" class="mode-btn">Iron Miner [1x1] (<span id="unplaced-iron-miners">0</span>)</button>
+        <button id="place-copper-miner" class="mode-btn hidden">Copper Miner [1x1] (<span id="unplaced-copper-miners">0</span>)</button>
+        <button id="place-coal-miner" class="mode-btn hidden">Coal Miner [1x1] (<span id="unplaced-coal-miners">0</span>)</button>
+        <button id="place-smelter" class="mode-btn hidden">Smelter [2x3] (<span id="unplaced-smelters">0</span>)</button>
+        <button id="place-engine" class="mode-btn hidden">Steam Engine [2x2] (<span id="unplaced-engines">0</span>)</button>
+        <button id="place-extruder" class="mode-btn hidden">Extruder [2x2] (<span id="unplaced-extruders">0</span>)</button>
+        <button id="place-assembler" class="mode-btn hidden">Assembler [3x3] (<span id="unplaced-assemblers">0</span>)</button>
+    </div>
+    <hr>
+</div>
 
 <div id="research-section">
     <h2>Research & Development</h2>
@@ -24,30 +48,24 @@
 <div id="inventory">
     <div id="power-grid" class="hidden">
         <h2>⚡ Power Grid: <span id="power-status">0 kW / 0 kW</span></h2>
-        <p>Steam Engines: <strong id="engine-count">0</strong></p>
         <hr>
     </div>
 
     <h2>Raw Resources (Max: <span id="storage-cap-1">100</span>)</h2>
-    <p>Iron Ore: <strong id="iron-count">0</strong> | Auto-Miners: <span id="miner-count">0</span></p>
-
-    <p id="copper-inv" class="hidden">Copper Ore: <strong id="copper-count">0</strong> | Auto-Miners: <span id="copper-miner-count">0</span></p>
-    <p id="coal-inv" class="hidden">Coal: <strong id="coal-count">0</strong> | Auto-Miners: <span id="coal-miner-count">0</span></p>
+    <p>Iron Ore: <strong id="iron-count">0</strong></p>
+    <p id="copper-inv" class="hidden">Copper Ore: <strong id="copper-count">0</strong></p>
+    <p id="coal-inv" class="hidden">Coal: <strong id="coal-count">0</strong></p>
 
     <div id="plate-inv" class="hidden">
         <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
-        <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
-        <!-- NEW: SMELTER PROGRESS BAR -->
+        <p>Iron Plates: <strong id="iron-plate-count">0</strong></p>
         <div class="machine-progress"><div id="smelter-progress" class="machine-fill"></div></div>
     </div>
 
     <div id="advanced-inv" class="hidden">
-        <p>Copper Wire: <strong id="copper-wire-count">0</strong> | Extruders: <span id="extruder-count">0</span></p>
-        <!-- NEW: EXTRUDER PROGRESS BAR -->
+        <p>Copper Wire: <strong id="copper-wire-count">0</strong></p>
         <div class="machine-progress"><div id="extruder-progress" class="machine-fill"></div></div>
-
-        <p>Circuit Boards: <strong id="circuit-board-count">0</strong> | Assemblers: <span id="assembler-count">0</span></p>
-        <!-- NEW: ASSEMBLER PROGRESS BAR -->
+        <p>Circuit Boards: <strong id="circuit-board-count">0</strong></p>
         <div class="machine-progress"><div id="assembler-progress" class="machine-fill"></div></div>
     </div>
 </div>
@@ -55,54 +73,54 @@
 <hr>
 
 <div id="actions">
-    <h2>Mining & Automation</h2>
-    <button id="mine-iron-btn">⛏️ Mine Iron</button>
-    <button id="buy-miner-btn">⚙️ Build Iron Miner (Cost: <span id="miner-cost">10</span> Iron)</button>
+    <h2>Manufacturing Shop</h2>
+
+    <button id="buy-miner-btn">⚙️ Buy Iron Miner (Cost: <span id="miner-cost">10</span> Iron)</button>
+    <button id="mine-iron-btn">⛏️ Mine Iron (Manual)</button>
     <br><br>
 
     <div id="copper-action" class="hidden">
-        <button id="mine-copper-btn">⛏️ Mine Copper</button>
-        <button id="buy-copper-miner-btn">⚙️ Build Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
+        <button id="buy-copper-miner-btn">⚙️ Buy Copper Miner (Cost: <span id="copper-miner-cost">10</span> Copper)</button>
+        <button id="mine-copper-btn">⛏️ Mine Copper (Manual)</button>
         <br><br>
     </div>
 
     <div id="coal-action" class="hidden">
-        <button id="mine-coal-btn">⛏️ Mine Coal</button>
-        <button id="buy-coal-miner-btn">⚙️ Build Coal Miner (Cost: <span id="coal-miner-cost">10</span> Coal)</button>
+        <button id="buy-coal-miner-btn">⚙️ Buy Coal Miner (Cost: <span id="coal-miner-cost">10</span> Coal)</button>
+        <button id="mine-coal-btn">⛏️ Mine Coal (Manual)</button>
     </div>
 
     <div id="smelting-action" class="hidden">
-        <h2>Processing & Logistics</h2>
-        <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
-        <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate)</em></small></p>
+        <hr>
+        <button id="buy-smelter-btn">🔥 Buy Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
+        <p><small><em>(Size: 2x3 blocks. Consumes 1 Iron Ore + 1 Coal)</em></small></p>
         <br>
         <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
     </div>
 
     <div id="advanced-action" class="hidden">
         <hr>
-        <h2>Advanced Manufacturing ⚡</h2>
-        <button id="buy-engine-btn">🚂 Build Steam Engine (Cost: <span id="engine-cost">20</span> Plates)</button>
-        <p><small><em>(Consumes 1 Coal to generate 10 kW of Power)</em></small></p>
+        <button id="buy-engine-btn">🚂 Buy Steam Engine (Cost: <span id="engine-cost">20</span> Plates)</button>
+        <p><small><em>(Size: 2x2 blocks. Consumes 1 Coal to generate 10 kW)</em></small></p>
         <br>
-        <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
-        <p><small><em>(Uses 2 kW. Consumes 1 Copper to produce 2 Copper Wire)</em></small></p>
+        <button id="buy-extruder-btn">🏭 Buy Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
+        <p><small><em>(Size: 2x2 blocks. Uses 2 kW. Consumes 1 Copper)</em></small></p>
         <br>
-        <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
-        <p><small><em>(Uses 5 kW. Consumes 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board)</em></small></p>
+        <button id="buy-assembler-btn">🤖 Buy Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
+        <p><small><em>(Size: 3x3 blocks. Uses 5 kW. Consumes 1 Plate + 2 Wire)</em></small></p>
     </div>
 
     <div id="upgrades-action" class="hidden">
         <hr>
-        <h2>Efficiency Upgrades 📈</h2>
+        <h2>Efficiency & Expansion 📈</h2>
+        <button id="buy-land-btn">🗺️ Expand Factory Floor (Cost: <span id="land-cost">50</span> Plates)</button>
+        <p><small><em>(Adds more space to the physical building grid)</em></small></p>
+        <br>
         <button id="upg-pickaxe-btn">🛠️ Steel Pickaxe (Cost: 10 Circuit Boards)</button>
-        <p><small><em>(Manual mining clicks yield 3 resources instead of 1)</em></small></p>
         <br>
         <button id="upg-miners-btn">⚡ Overclock Miners (Cost: 25 Circuit Boards)</button>
-        <p><small><em>(All Auto-Miners produce double their normal output)</em></small></p>
         <br>
         <button id="upg-smelters-btn">🔥 Carbon Smelting (Cost: 50 Circuit Boards)</button>
-        <p><small><em>(Smelters become so efficient they no longer consume Coal)</em></small></p>
     </div>
 </div>
 
@@ -113,7 +131,6 @@
         <h2>System & Data</h2>
         <p><small>Game auto-saves every 10 seconds.</small></p>
         <p id="time-since-save">Last saved: Just now</p>
-
         <button id="save-btn">💾 Manual Save</button>
         <button id="export-btn">⬇️ Export Save</button>
         <br><br>
