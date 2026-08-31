@@ -9,14 +9,8 @@ let circuitBoards = 0; let assemblers = 0; let assemblerCost = 30;
 
 let steamEngines = 0; let steamEngineCost = 20;
 let powerSupply = 0; let powerDemand = 0;
-
 let unlockedSmelting = false; let unlockedElectronics = false;
-
-// New Upgrade Variables
-let upgPickaxe = false;
-let upgMiners = false;
-let upgSmelters = false;
-
+let upgPickaxe = false; let upgMiners = false; let upgSmelters = false;
 let lastSaveTime = Date.now();
 
 // --- GRAB HTML ELEMENTS ---
@@ -66,7 +60,6 @@ const buyEngineBtn = document.getElementById("buy-engine-btn");
 const unlockSmeltingBtn = document.getElementById("unlock-smelting-btn");
 const unlockElectronicsBtn = document.getElementById("unlock-electronics-btn");
 
-// Upgrade Buttons
 const upgPickaxeBtn = document.getElementById("upg-pickaxe-btn");
 const upgMinersBtn = document.getElementById("upg-miners-btn");
 const upgSmeltersBtn = document.getElementById("upg-smelters-btn");
@@ -80,8 +73,12 @@ const settingsBtn = document.getElementById("settings-btn");
 const settingsModal = document.getElementById("settings-modal");
 const closeModal = document.getElementById("close-modal");
 
+// Animation Progress Bar Elements
+const smelterProgress = document.getElementById("smelter-progress");
+const extruderProgress = document.getElementById("extruder-progress");
+const assemblerProgress = document.getElementById("assembler-progress");
+
 // --- 1. GAMEPLAY BUTTONS ---
-// The manual click logic now checks if you own the Pickaxe upgrade!
 mineIronBtn.addEventListener("click", () => { let yield = upgPickaxe ? 3 : 1; ironOre = Math.min(ironOre + yield, storageCap); updateUI(); });
 mineCopperBtn.addEventListener("click", () => { let yield = upgPickaxe ? 3 : 1; copperOre = Math.min(copperOre + yield, storageCap); updateUI(); });
 mineCoalBtn.addEventListener("click", () => { let yield = upgPickaxe ? 3 : 1; coal = Math.min(coal + yield, storageCap); updateUI(); });
@@ -92,74 +89,78 @@ buyCoalMinerBtn.addEventListener("click", () => { if (coal >= coalMinerCost) { c
 buySmelterBtn.addEventListener("click", () => { if (ironOre >= smelterCost) { ironOre -= smelterCost; ironSmelters++; smelterCost = Math.floor(smelterCost * 1.5); updateUI(); } });
 buyExtruderBtn.addEventListener("click", () => { if (copperOre >= extruderCost) { copperOre -= extruderCost; wireExtruders++; extruderCost = Math.floor(extruderCost * 1.5); updateUI(); } });
 buyAssemblerBtn.addEventListener("click", () => { if (ironPlates >= assemblerCost) { ironPlates -= assemblerCost; assemblers++; assemblerCost = Math.floor(assemblerCost * 1.5); updateUI(); } });
-
-buyEngineBtn.addEventListener("click", () => {
-    if (ironPlates >= steamEngineCost) { ironPlates -= steamEngineCost; steamEngines++; steamEngineCost = Math.floor(steamEngineCost * 1.5); updateUI(); }
-});
-
+buyEngineBtn.addEventListener("click", () => { if (ironPlates >= steamEngineCost) { ironPlates -= steamEngineCost; steamEngines++; steamEngineCost = Math.floor(steamEngineCost * 1.5); updateUI(); } });
 upgradeStorageBtn.addEventListener("click", () => { if (ironPlates >= storageUpgradeCost) { ironPlates -= storageUpgradeCost; storageCap = Math.floor(storageCap * 2); storageUpgradeCost = Math.floor(storageUpgradeCost * 2.5); updateUI(); } });
 
 unlockSmeltingBtn.addEventListener("click", () => { if (ironOre >= 50) { ironOre -= 50; unlockedSmelting = true; updateUI(); } });
 unlockElectronicsBtn.addEventListener("click", () => { if (ironPlates >= 50) { ironPlates -= 50; unlockedElectronics = true; updateUI(); } });
 
-// Upgrades Purchases
-upgPickaxeBtn.addEventListener("click", () => {
-    if (circuitBoards >= 10 && !upgPickaxe) { circuitBoards -= 10; upgPickaxe = true; updateUI(); }
-});
-upgMinersBtn.addEventListener("click", () => {
-    if (circuitBoards >= 25 && !upgMiners) { circuitBoards -= 25; upgMiners = true; updateUI(); }
-});
-upgSmeltersBtn.addEventListener("click", () => {
-    if (circuitBoards >= 50 && !upgSmelters) { circuitBoards -= 50; upgSmelters = true; updateUI(); }
-});
+upgPickaxeBtn.addEventListener("click", () => { if (circuitBoards >= 10 && !upgPickaxe) { circuitBoards -= 10; upgPickaxe = true; updateUI(); } });
+upgMinersBtn.addEventListener("click", () => { if (circuitBoards >= 25 && !upgMiners) { circuitBoards -= 25; upgMiners = true; updateUI(); } });
+upgSmeltersBtn.addEventListener("click", () => { if (circuitBoards >= 50 && !upgSmelters) { circuitBoards -= 50; upgSmelters = true; updateUI(); } });
 
 // --- 2. THE AUTOMATION LOOP ---
 setInterval(() => {
-    // 1. Miners (Outputs double if Overclock upgrade is purchased)
+    // Machine active trackers for animations
+    let smelterActive = false;
+    let extruderActive = false;
+    let assemblerActive = false;
+
     let minerMulti = upgMiners ? 2 : 1;
     if (ironMiners > 0) ironOre = Math.min(ironOre + (ironMiners * minerMulti), storageCap);
     if (copperMiners > 0) copperOre = Math.min(copperOre + (copperMiners * minerMulti), storageCap);
     if (coalMiners > 0) coal = Math.min(coal + (coalMiners * minerMulti), storageCap);
 
-    // 2. Power Generation
     let activeEngines = Math.min(steamEngines, coal);
     coal -= activeEngines;
     powerSupply = activeEngines * 10;
     powerDemand = (wireExtruders * 2) + (assemblers * 5);
 
-    // 3. Smelters (Changes logic completely if Carbon Smelting is purchased)
     if (ironSmelters > 0) {
         let spaceLeftForPlates = storageCap - ironPlates;
         let amountToSmelt = 0;
 
-        if (upgSmelters) {
-            // Coal is no longer a limiting factor!
-            amountToSmelt = Math.min(ironOre, ironSmelters, spaceLeftForPlates);
+        if (upgSmelters) amountToSmelt = Math.min(ironOre, ironSmelters, spaceLeftForPlates);
+        else amountToSmelt = Math.min(ironOre, coal, ironSmelters, spaceLeftForPlates);
+
+        if (amountToSmelt > 0) {
             ironOre -= amountToSmelt;
+            if (!upgSmelters) coal -= amountToSmelt;
             ironPlates += amountToSmelt;
-        } else {
-            // Normal operation (Requires Coal)
-            amountToSmelt = Math.min(ironOre, coal, ironSmelters, spaceLeftForPlates);
-            ironOre -= amountToSmelt;
-            coal -= amountToSmelt;
-            ironPlates += amountToSmelt;
+            smelterActive = true; // Engine successfully ran!
         }
     }
 
-    // 4. Advanced Manufacturing
     if (powerSupply >= powerDemand && powerDemand > 0) {
         if (wireExtruders > 0) {
             let spaceLeftForWire = storageCap - copperWire;
             let amountToExtrude = Math.min(copperOre, wireExtruders, Math.floor(spaceLeftForWire / 2));
-            copperOre -= amountToExtrude; copperWire += (amountToExtrude * 2);
+            if (amountToExtrude > 0) {
+                copperOre -= amountToExtrude; copperWire += (amountToExtrude * 2);
+                extruderActive = true; // Extruder successfully ran!
+            }
         }
         if (assemblers > 0) {
             let spaceLeftForBoards = storageCap - circuitBoards;
             let maxFromWire = Math.floor(copperWire / 2);
             let amountToAssemble = Math.min(ironPlates, maxFromWire, assemblers, spaceLeftForBoards);
-            ironPlates -= amountToAssemble; copperWire -= (amountToAssemble * 2); circuitBoards += amountToAssemble;
+            if (amountToAssemble > 0) {
+                ironPlates -= amountToAssemble; copperWire -= (amountToAssemble * 2); circuitBoards += amountToAssemble;
+                assemblerActive = true; // Assembler successfully ran!
+            }
         }
     }
+
+    // Toggle CSS animations based on activity
+    if (smelterActive) smelterProgress.classList.add("running");
+    else smelterProgress.classList.remove("running");
+
+    if (extruderActive) extruderProgress.classList.add("running");
+    else extruderProgress.classList.remove("running");
+
+    if (assemblerActive) assemblerProgress.classList.add("running");
+    else assemblerProgress.classList.remove("running");
+
     updateUI();
 }, 1000);
 
@@ -192,15 +193,11 @@ function updateUI() {
     if (unlockedElectronics) {
         document.getElementById("copper-inv").classList.remove("hidden"); document.getElementById("advanced-inv").classList.remove("hidden");
         document.getElementById("copper-action").classList.remove("hidden"); document.getElementById("advanced-action").classList.remove("hidden");
-        document.getElementById("power-grid").classList.remove("hidden");
-
-        // Reveal upgrades shop!
-        document.getElementById("upgrades-action").classList.remove("hidden");
+        document.getElementById("power-grid").classList.remove("hidden"); document.getElementById("upgrades-action").classList.remove("hidden");
         unlockElectronicsBtn.classList.add("hidden");
     }
     if (unlockedSmelting && unlockedElectronics) document.getElementById("research-section").classList.add("hidden");
 
-    // Lock Upgrades visually if purchased
     if (upgPickaxe) { upgPickaxeBtn.classList.add("purchased"); upgPickaxeBtn.innerText = "🛠️ Steel Pickaxe (Purchased)"; }
     if (upgMiners) { upgMinersBtn.classList.add("purchased"); upgMinersBtn.innerText = "⚡ Overclock Miners (Purchased)"; }
     if (upgSmelters) { upgSmeltersBtn.classList.add("purchased"); upgSmeltersBtn.innerText = "🔥 Carbon Smelting (Purchased)"; }
@@ -211,7 +208,7 @@ function saveGame() {
     const gameData = {
         storageCap, storageUpgradeCost, ironOre, ironMiners, ironMinerCost, copperOre, copperMiners, copperMinerCost, coal, coalMiners, coalMinerCost,
         ironPlates, ironSmelters, smelterCost, copperWire, wireExtruders, extruderCost, circuitBoards, assemblers, assemblerCost, steamEngines, steamEngineCost,
-        unlockedSmelting, unlockedElectronics, upgPickaxe, upgMiners, upgSmelters // Make sure upgrades are saved!
+        unlockedSmelting, unlockedElectronics, upgPickaxe, upgMiners, upgSmelters
     };
     localStorage.setItem("factorySave", JSON.stringify(gameData));
     lastSaveTime = Date.now(); timeSinceSaveDisplay.innerText = `Last saved: Just now`;
@@ -230,11 +227,7 @@ function loadGame() {
         if (data.circuitBoards !== undefined) circuitBoards = data.circuitBoards; if (data.assemblers !== undefined) assemblers = data.assemblers; if (data.assemblerCost !== undefined) assemblerCost = data.assemblerCost;
         if (data.steamEngines !== undefined) steamEngines = data.steamEngines; if (data.steamEngineCost !== undefined) steamEngineCost = data.steamEngineCost;
         if (data.unlockedSmelting !== undefined) unlockedSmelting = data.unlockedSmelting; if (data.unlockedElectronics !== undefined) unlockedElectronics = data.unlockedElectronics;
-
-        // Load Upgrades
-        if (data.upgPickaxe !== undefined) upgPickaxe = data.upgPickaxe;
-        if (data.upgMiners !== undefined) upgMiners = data.upgMiners;
-        if (data.upgSmelters !== undefined) upgSmelters = data.upgSmelters;
+        if (data.upgPickaxe !== undefined) upgPickaxe = data.upgPickaxe; if (data.upgMiners !== undefined) upgMiners = data.upgMiners; if (data.upgSmelters !== undefined) upgSmelters = data.upgSmelters;
 
         lastSaveTime = Date.now(); updateUI();
     }

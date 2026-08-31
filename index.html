@@ -37,11 +37,18 @@
     <div id="plate-inv" class="hidden">
         <h2>Manufactured Goods (Max: <span id="storage-cap-2">100</span>)</h2>
         <p>Iron Plates: <strong id="iron-plate-count">0</strong> | Smelters: <span id="smelter-count">0</span></p>
+        <!-- NEW: SMELTER PROGRESS BAR -->
+        <div class="machine-progress"><div id="smelter-progress" class="machine-fill"></div></div>
     </div>
 
     <div id="advanced-inv" class="hidden">
         <p>Copper Wire: <strong id="copper-wire-count">0</strong> | Extruders: <span id="extruder-count">0</span></p>
+        <!-- NEW: EXTRUDER PROGRESS BAR -->
+        <div class="machine-progress"><div id="extruder-progress" class="machine-fill"></div></div>
+
         <p>Circuit Boards: <strong id="circuit-board-count">0</strong> | Assemblers: <span id="assembler-count">0</span></p>
+        <!-- NEW: ASSEMBLER PROGRESS BAR -->
+        <div class="machine-progress"><div id="assembler-progress" class="machine-fill"></div></div>
     </div>
 </div>
 
@@ -85,7 +92,6 @@
         <p><small><em>(Uses 5 kW. Consumes 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board)</em></small></p>
     </div>
 
-    <!-- NEW: UPGRADES SHOP -->
     <div id="upgrades-action" class="hidden">
         <hr>
         <h2>Efficiency Upgrades 📈</h2>
