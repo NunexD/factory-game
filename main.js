@@ -1,15 +1,10 @@
 // --- GAME STATE VARIABLES ---
-let ironOre = 0;
-let ironMiners = 0;
-let ironMinerCost = 10;
+let ironOre = 0; let ironMiners = 0; let ironMinerCost = 10;
+let copperOre = 0; let copperMiners = 0; let copperMinerCost = 10;
+let ironPlates = 0; let ironSmelters = 0; let smelterCost = 20;
 
-let copperOre = 0;
-let copperMiners = 0;
-let copperMinerCost = 10;
-
-let ironPlates = 0;
-let ironSmelters = 0;
-let smelterCost = 20;
+// Save tracking variable
+let lastSaveTime = Date.now();
 
 // --- GRAB HTML ELEMENTS ---
 const ironCountDisplay = document.getElementById("iron-count");
@@ -29,22 +24,21 @@ const smelterCountDisplay = document.getElementById("smelter-count");
 const smelterCostDisplay = document.getElementById("smelter-cost");
 const buySmelterBtn = document.getElementById("buy-smelter-btn");
 
-// New System Elements
+// System Elements
 const saveBtn = document.getElementById("save-btn");
 const resetBtn = document.getElementById("reset-btn");
 const exportBtn = document.getElementById("export-btn");
 const importFile = document.getElementById("import-file");
+const timeSinceSaveDisplay = document.getElementById("time-since-save");
+
+// Modal Elements
+const settingsBtn = document.getElementById("settings-btn");
+const settingsModal = document.getElementById("settings-modal");
+const closeModal = document.getElementById("close-modal");
 
 // --- 1. GAMEPLAY BUTTONS ---
-mineIronBtn.addEventListener("click", () => {
-    ironOre += 1;
-    updateUI();
-});
-
-mineCopperBtn.addEventListener("click", () => {
-    copperOre += 1;
-    updateUI();
-});
+mineIronBtn.addEventListener("click", () => { ironOre += 1; updateUI(); });
+mineCopperBtn.addEventListener("click", () => { copperOre += 1; updateUI(); });
 
 buyIronMinerBtn.addEventListener("click", () => {
     if (ironOre >= ironMinerCost) {
@@ -86,6 +80,12 @@ setInterval(() => {
     updateUI();
 }, 1000);
 
+// Update "Time since last save" text in the modal every second
+setInterval(() => {
+    const seconds = Math.floor((Date.now() - lastSaveTime) / 1000);
+    timeSinceSaveDisplay.innerText = `Last saved: ${seconds} seconds ago`;
+}, 1000);
+
 // --- 3. UPDATE THE SCREEN ---
 function updateUI() {
     ironCountDisplay.innerText = ironOre;
@@ -102,8 +102,6 @@ function updateUI() {
 }
 
 // --- 4. SAVE & LOAD SYSTEM ---
-
-// Bundle all data and save to browser memory
 function saveGame() {
     const gameData = {
         ironOre, ironMiners, ironMinerCost,
@@ -111,15 +109,16 @@ function saveGame() {
         ironPlates, ironSmelters, smelterCost
     };
     localStorage.setItem("factorySave", JSON.stringify(gameData));
-    console.log("Game Saved!");
+
+    // Reset the timer whenever a save happens!
+    lastSaveTime = Date.now();
+    timeSinceSaveDisplay.innerText = `Last saved: Just now`;
 }
 
-// Read data from browser memory and overwrite variables
 function loadGame() {
     const savedData = localStorage.getItem("factorySave");
     if (savedData) {
         const data = JSON.parse(savedData);
-        // We check if data exists before loading it, to prevent bugs
         if (data.ironOre !== undefined) ironOre = data.ironOre;
         if (data.ironMiners !== undefined) ironMiners = data.ironMiners;
         if (data.ironMinerCost !== undefined) ironMinerCost = data.ironMinerCost;
@@ -129,39 +128,32 @@ function loadGame() {
         if (data.ironPlates !== undefined) ironPlates = data.ironPlates;
         if (data.ironSmelters !== undefined) ironSmelters = data.ironSmelters;
         if (data.smelterCost !== undefined) smelterCost = data.smelterCost;
+
+        lastSaveTime = Date.now(); // Reset timer on load so it doesn't warn instantly
         updateUI();
     }
 }
 
-// Auto-Save every 10 seconds (10000 ms)
+// Auto-Save every 10 seconds
 setInterval(saveGame, 10000);
 
 // Manual Save Button
-saveBtn.addEventListener("click", () => {
-    saveGame();
-    alert("Game manually saved!");
-});
+saveBtn.addEventListener("click", saveGame);
 
 // Hard Reset Button
 resetBtn.addEventListener("click", () => {
     if (confirm("Are you sure you want to wipe all progress? This cannot be undone!")) {
         localStorage.removeItem("factorySave");
-        location.reload(); // Refreshes the page to start fresh
+        location.reload();
     }
 });
 
-// --- 5. EXPORT / IMPORT TO FILE ---
-
-// Export to .json file
+// Export & Import
 exportBtn.addEventListener("click", () => {
-    saveGame(); // Save latest data first
+    saveGame();
     const savedData = localStorage.getItem("factorySave");
-
-    // Create a temporary text file in the browser
     const blob = new Blob([savedData], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
-    // Create a fake link, click it to download, then delete the link
     const a = document.createElement("a");
     a.href = url;
     a.download = "factory-save.json";
@@ -169,18 +161,16 @@ exportBtn.addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-// Import from .json file
 importFile.addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
-                // Parse the text file and save it to browser memory
                 const importedData = JSON.parse(e.target.result);
                 localStorage.setItem("factorySave", JSON.stringify(importedData));
                 alert("Save imported successfully! Reloading game...");
-                location.reload(); // Reload to apply the loaded data
+                location.reload();
             } catch (err) {
                 alert("Invalid save file!");
             }
@@ -189,10 +179,39 @@ importFile.addEventListener("change", (event) => {
     }
 });
 
-// Load the game immediately when the script first runs
+// Load the game immediately
 loadGame();
 
-// --- 6. THEME TOGGLE LOGIC ---
+// --- 5. TAB CLOSE WARNING ---
+window.addEventListener("beforeunload", (event) => {
+    const secondsUnsaved = Math.floor((Date.now() - lastSaveTime) / 1000);
+
+    // If it has been more than 2 seconds since the last save, trigger the warning
+    if (secondsUnsaved > 2) {
+        event.preventDefault();
+        event.returnValue = ""; // This triggers the browser's default warning popup
+    }
+});
+
+// --- 6. MODAL & THEME LOGIC ---
+
+// Open Modal
+settingsBtn.addEventListener("click", () => {
+    settingsModal.style.display = "flex"; // Changes from 'none' to 'flex' to show it
+});
+
+// Close Modal (clicking the X)
+closeModal.addEventListener("click", () => {
+    settingsModal.style.display = "none";
+});
+
+// Close Modal (clicking the dark background outside the box)
+window.addEventListener("click", (event) => {
+    if (event.target === settingsModal) {
+        settingsModal.style.display = "none";
+    }
+});
+
 const themeToggleBtn = document.getElementById("theme-toggle");
 const body = document.body;
 

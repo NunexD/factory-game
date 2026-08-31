@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<button id="theme-toggle">🌙 Dark Mode</button>
+<!-- Top Right Controls -->
+<div id="top-controls">
+    <button id="theme-toggle">🌙 Dark Mode</button>
+    <button id="settings-btn">⚙️ System</button>
+</div>
 
 <h1>Factory Dashboard</h1>
 
@@ -36,19 +40,23 @@
     <p><small><em>(Smelters automatically consume 1 Iron Ore to produce 1 Iron Plate every second)</em></small></p>
 </div>
 
-<hr>
+<!-- NEW: HIDDEN SETTINGS MODAL -->
+<div id="settings-modal" class="modal-overlay">
+    <div class="modal-content">
+        <span id="close-modal">&times;</span>
+        <h2>System & Data</h2>
+        <p><small>Game auto-saves every 10 seconds.</small></p>
+        <p id="time-since-save">Last saved: Just now</p>
 
-<!-- NEW: SAVE SYSTEM UI -->
-<div id="system">
-    <h2>System & Data</h2>
-    <p><small>Game auto-saves every 10 seconds.</small></p>
-    <button id="save-btn">💾 Manual Save</button>
-    <button id="reset-btn" class="danger-btn">⚠️ Hard Reset</button>
-    <br><br>
-    <button id="export-btn">⬇️ Export Save File</button>
-    <br><br>
-    <label for="import-file"><strong>Import Save:</strong> </label>
-    <input type="file" id="import-file" accept=".json">
+        <button id="save-btn">💾 Manual Save</button>
+        <button id="export-btn">⬇️ Export Save</button>
+        <br><br>
+        <label for="import-file"><strong>Import Save:</strong> </label>
+        <input type="file" id="import-file" accept=".json">
+        <br><br>
+        <hr>
+        <button id="reset-btn" class="danger-btn">⚠️ Hard Reset</button>
+    </div>
 </div>
 
 <script src="main.js"></script>
