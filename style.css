@@ -20,6 +20,13 @@ body.dark-mode .modal-content { background: #1e1e1e; color: #e0e0e0; }
 #close-modal:hover { color: #ff4d4d; }
 
 .hidden { display: none !important; }
-
-/* NEW: Power Grid Warning */
 .power-shortage { color: #ff4d4d !important; font-weight: bold; }
+
+/* NEW: Upgrades Purchased State */
+.purchased {
+    opacity: 0.6;
+    pointer-events: none; /* Stops it from being clickable */
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #4CAF50 !important;
+}

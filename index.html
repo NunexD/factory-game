@@ -67,7 +67,7 @@
     <div id="smelting-action" class="hidden">
         <h2>Processing & Logistics</h2>
         <button id="buy-smelter-btn">🔥 Build Iron Smelter (Cost: <span id="smelter-cost">20</span> Iron)</button>
-        <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate every second)</em></small></p>
+        <p><small><em>(Smelters consume 1 Iron Ore + 1 Coal to produce 1 Iron Plate)</em></small></p>
         <br>
         <button id="upgrade-storage-btn">📦 Upgrade Storage Capacity (Cost: <span id="storage-upgrade-cost">25</span> Plates)</button>
     </div>
@@ -76,13 +76,27 @@
         <hr>
         <h2>Advanced Manufacturing ⚡</h2>
         <button id="buy-engine-btn">🚂 Build Steam Engine (Cost: <span id="engine-cost">20</span> Plates)</button>
-        <p><small><em>(Consumes 1 Coal to generate 10 kW of Power every second)</em></small></p>
+        <p><small><em>(Consumes 1 Coal to generate 10 kW of Power)</em></small></p>
         <br>
         <button id="buy-extruder-btn">🏭 Build Wire Extruder (Cost: <span id="extruder-cost">25</span> Copper)</button>
-        <p><small><em>(Uses 2 kW. Consumes 1 Copper Ore to produce 2 Copper Wire)</em></small></p>
+        <p><small><em>(Uses 2 kW. Consumes 1 Copper to produce 2 Copper Wire)</em></small></p>
         <br>
         <button id="buy-assembler-btn">🤖 Build Assembler (Cost: <span id="assembler-cost">30</span> Plates)</button>
         <p><small><em>(Uses 5 kW. Consumes 1 Iron Plate + 2 Copper Wire to produce 1 Circuit Board)</em></small></p>
+    </div>
+
+    <!-- NEW: UPGRADES SHOP -->
+    <div id="upgrades-action" class="hidden">
+        <hr>
+        <h2>Efficiency Upgrades 📈</h2>
+        <button id="upg-pickaxe-btn">🛠️ Steel Pickaxe (Cost: 10 Circuit Boards)</button>
+        <p><small><em>(Manual mining clicks yield 3 resources instead of 1)</em></small></p>
+        <br>
+        <button id="upg-miners-btn">⚡ Overclock Miners (Cost: 25 Circuit Boards)</button>
+        <p><small><em>(All Auto-Miners produce double their normal output)</em></small></p>
+        <br>
+        <button id="upg-smelters-btn">🔥 Carbon Smelting (Cost: 50 Circuit Boards)</button>
+        <p><small><em>(Smelters become so efficient they no longer consume Coal)</em></small></p>
     </div>
 </div>
 
